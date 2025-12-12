@@ -1,0 +1,19 @@
+/.venv/
+/.idea/
+client/Client/Library
+client/Client/Logs
+client/Client/.vscode
+client/Client/Assembly-CSharp.csproj
+client/Client/UserSettings
+client/Client/Temp
+test.png
+test.py
+test.py
+api_server/.idea
+api_server/account.json
+api_server/account.json
+client/Client/Assets/Animated Loading Icons
+client/Client/Assets/StreamingAssets
+/api_server
+echo "<api_server>/" >> .gitignore
+client/Client/Assets/Script

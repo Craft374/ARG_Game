@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>NET OPS CONSOLE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #020617;
+      --panel: rgba(2, 6, 23, 0.7);
+      --accent: #38bdf8;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --danger: #f97316;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #0f172a 0%, #020617 45%, #000 100%);
+      font-family: ui-monospace, SFMono-Regular, SFMono-Regular, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .screen {
+      width: min(960px, 100%);
+      padding: 2rem 1.5rem;
+    }
+    .panel {
+      background: rgba(2,6,23,0.65);
+      border: 1px solid rgba(148, 163, 184, .1);
+      border-radius: .5rem;
+      box-shadow: 0 0 35px rgba(0,0,0,.25);
+      backdrop-filter: blur(6px);
+    }
+    .login-box {
+      max-width: 420px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 1.1rem;
+      letter-spacing: .15em;
+      margin-bottom: 1.5rem;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    label {
+      font-size: .65rem;
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      color: var(--muted);
+      display: block;
+      margin-bottom: .3rem;
+    }
+    input {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.35);
+      border: 1px solid rgba(148, 163, 184, .15);
+      border-radius: .35rem;
+      padding: .55rem .7rem;
+      color: var(--text);
+      outline: none;
+      font-family: inherit;
+      margin-bottom: .8rem;
+    }
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, .1);
+    }
+    button {
+      width: 100%;
+      background: linear-gradient(120deg, #0ea5e9 0%, #0369a1 100%);
+      border: none;
+      border-radius: .35rem;
+      padding: .65rem .6rem;
+      color: #e2e8f0;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+    button:active {
+      transform: translateY(1px);
+    }
+
+    /* dashboard */
+    .hidden { display: none; }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .75rem 1rem;
+      border-bottom: 1px solid rgba(148, 163, 184, .08);
+    }
+    .tag {
+      background: rgba(56, 189, 248, .08);
+      border: 1px solid rgba(56, 189, 248, .2);
+      border-radius: .25rem;
+      font-size: .6rem;
+      padding: .25rem .45rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--accent);
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 1.4fr .7fr;
+      gap: 1rem;
+      padding: 1rem;
+    }
+    .jobs, .info {
+      border: 1px solid rgba(148, 163, 184, .05);
+      border-radius: .4rem;
+      background: rgba(15, 23, 42, 0.1);
+      min-height: 300px;
+    }
+    .jobs-title, .info-title {
+      border-bottom: 1px solid rgba(148, 163, 184, .05);
+      padding: .7rem .7rem;
+      font-size: .7rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .job-list {
+      list-style: none;
+      padding: .3rem .5rem 1rem;
+      margin: 0;
+    }
+    .job {
+      border: 1px solid rgba(148, 163, 184, .05);
+      border-radius: .35rem;
+      padding: .55rem .55rem .5rem;
+      margin-top: .55rem;
+      background: rgba(2, 6, 23, 0.1);
+      cursor: pointer;
+      transition: background .12s ease-out;
+    }
+    .job:hover {
+      background: rgba(15, 23, 42, .3);
+    }
+    .job-title {
+      font-size: .75rem;
+      margin-bottom: .2rem;
+      display: flex;
+      justify-content: space-between;
+      gap: .5rem;
+    }
+    .job-meta {
+      font-size: .6rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .badge {
+      background: rgba(249, 115, 22, .08);
+      border: 1px solid rgba(249, 115, 22, .25);
+      color: var(--danger);
+      border-radius: .25rem;
+      padding: .12rem .35rem;
+      font-size: .55rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .log-box {
+      padding: .5rem .6rem 1rem;
+      font-size: .6rem;
+      color: #94a3b8;
+      white-space: pre-line;
+      line-height: 1.2rem;
+    }
+    .code-line {
+      color: #e2e8f0;
+    }
+    @media (max-width: 820px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="screen">
+    <!-- 로그인 -->
+    <div id="login-view" class="panel login-box">
+      <h1>BLACKNODE ACCESS</h1>
+      <form id="login-form">
+        <label for="user">operator id</label>
+        <input id="user" name="user" placeholder="ex) net.ops.17" autocomplete="off" />
+        <label for="pass">access key</label>
+        <input id="pass" type="password" name="pass" placeholder="••••••••" />
+        <button type="submit">initialize session</button>
+      </form>
+    </div>
+
+    <!-- 대시보드 / 의뢰창 -->
+    <div id="dashboard" class="panel hidden">
+      <div class="topbar">
+        <div>
+          <div style="font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.18em;">connected to dispatch node.</div>
+          <div style="font-size:.75rem;margin-top:.25rem;">current operator: <span id="operator-name" style="color:var(--accent);">anonymous</span></div>
+        </div>
+        <div class="tag">job feed online</div>
+      </div>
+      <div class="layout">
+        <div class="jobs">
+          <div class="jobs-title">
+            <span>active contracts</span>
+            <span style="font-size:.55rem;color:var(--muted);">updated: <span id="updated-at"></span></span>
+          </div>
+          <ul class="job-list" id="job-list">
+            <li class="job" data-log="target: midwest-storage.net
+task: harvest credentials (admin / hr)
+note: vpn endpoint is unpatched, try sslstrip
+payout: 1,200cr">
+              <div class="job-title">
+                <span>01 // Credential Harvest</span>
+                <span class="badge">high</span>
+              </div>
+              <div class="job-meta">
+                <span>client: (hidden)</span>
+                <span>payout: 1,200cr</span>
+              </div>
+            </li>
+            <li class="job" data-log="target: dev.inno-works.io
+task: retrieve /builds/nightly/ and delete trace
+note: ssh keys were leaked 2wks ago
+payout: 900cr">
+              <div class="job-title">
+                <span>02 // Build Repo Exfil</span>
+                <span class="badge" style="color:#22c55e;border-color:rgba(34,197,94,.25);background:rgba(34,197,94,.08);">medium</span>
+              </div>
+              <div class="job-meta">
+                <span>client: inno-works</span>
+                <span>payout: 900cr</span>
+              </div>
+            </li>
+            <li class="job" data-log="target: ap-sg-logs01
+task: implant log cleaner
+note: creds should be in /etc/secrets.json
+payout: 400cr (recurring)">
+              <div class="job-title">
+                <span>03 // Log Cleaner Implant</span>
+                <span class="badge" style="color:#38bdf8;border-color:rgba(56,189,248,.25);background:rgba(56,189,248,.08);">low</span>
+              </div>
+              <div class="job-meta">
+                <span>client: private</span>
+                <span>payout: 400cr</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="info">
+          <div class="info-title">
+            <span>contract details</span>
+            <span style="font-size:.55rem;color:var(--muted);">session log</span>
+          </div>
+          <div class="log-box" id="log-box">
+            ready. select a contract from left panel.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('login-form');
+    const loginView = document.getElementById('login-view');
+    const dashboard = document.getElementById('dashboard');
+    const operatorName = document.getElementById('operator-name');
+    const updatedAt = document.getElementById('updated-at');
+    const logBox = document.getElementById('log-box');
+    const jobs = document.querySelectorAll('.job');
+
+    // 아무거나 입력하면 통과
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const user = document.getElementById('user').value.trim() || 'anonymous';
+      operatorName.textContent = user;
+      loginView.classList.add('hidden');
+      dashboard.classList.remove('hidden');
+      const now = new Date();
+      updatedAt.textContent = now.toLocaleString('ko-KR');
+    });
+
+    // 의뢰 선택 시 오른쪽 로그에 표시
+    jobs.forEach(job => {
+      job.addEventListener('click', () => {
+        const txt = job.getAttribute('data-log');
+        logBox.innerHTML =
+          '<span class="code-line">' +
+          txt.replace(/\n/g, '<br>') +
+          '</span><br><br><span style="color:#64748b">action: standby / accept / simulate</span>';
+      });
+    });
+  </script>
+</body>
+</html>

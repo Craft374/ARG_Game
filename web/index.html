@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>비밀번호 확인</title>
+  <style>
+    :root {
+      --bg: #0b1736;         /* 어두운 네이비 */
+      --panel: #0f2147;
+      --text: #e6eef8;
+      --muted: #a8b2c1;
+      --accent: #4da3ff;
+      --danger: #ff6b6b;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: radial-gradient(1200px 800px at 70% -20%, #12265a 0%, var(--bg) 40%) no-repeat fixed;
+      color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Apple SD Gothic Neo, sans-serif;
+    }
+    .wrap {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+      backdrop-filter: blur(6px);
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+    p.sub, p.text { margin: 0 0 18px; color: var(--muted); font-size: 14px; }
+    form { display: grid; gap: 12px; }
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+    label { font-size: 13px; color: var(--muted); }
+    input[type="password"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      background: var(--panel);
+      color: var(--text);
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    input[type="password"]::placeholder { color: #8fa0b8; }
+    input[type="password"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(77,163,255,.18);
+    }
+    button {
+      cursor: pointer;
+      padding: 12px 14px;
+      border: 0;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #4da3ff, #3a7fe0);
+      color: #06152b;
+      font-weight: 700;
+      transition: transform .04s ease, filter .15s ease;
+    }
+    button:active { transform: translateY(1px); }
+    .msg {
+      min-height: 20px;
+      font-size: 13px;
+    }
+    .msg.error { color: var(--danger); }
+    .result {
+      margin-top: 10px;
+      padding: 12px 14px;
+      border: 1px dashed rgba(255,255,255,0.18);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      font-weight: 600;
+      display: none; /* 맞으면 보이게 전환 */
+    }
+    .result.show { display: block; }
+    .footer {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" role="region" aria-labelledby="title">
+      <h1 id="title">비밀번호 확인</h1>
+      <p class="sub">비밀번호가 맞으면 아래에 텍스트가 나타납니다.</p>
+      <p class="text">game-info.kro.kr | / Handler: main.???????</p>
+
+      <form id="pw-form" autocomplete="off" novalidate>
+        <div class="field">
+          <label for="pw">비밀번호</label>
+          <input id="pw" name="pw" type="password" placeholder="비밀번호를 입력하세요" required />
+        </div>
+        <button type="submit" aria-label="확인">확인</button>
+        <div id="msg" class="msg" aria-live="polite"></div>
+      </form>
+
+      <div id="result" class="result" aria-live="polite">qwer</div>
+      <div class="footer">클라이언트 단 검증 예시입니다.</div>
+    </div>
+  </div>
+
+  <script>
+    // 설정: 여기 값을 원하는 비밀번호로 바꾸세요.
+    const PASSWORD = "read_root";
+
+    const form   = document.getElementById("pw-form");
+    const input  = document.getElementById("pw");
+    const msg    = document.getElementById("msg");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const ok = input.value === PASSWORD;
+      if (ok) {
+        msg.textContent = "확인되었습니다.";
+        msg.className = "msg";
+        result.classList.add("show");
+      } else {
+        msg.textContent = "비밀번호가 올바르지 않습니다.";
+        msg.className = "msg error";
+        result.classList.remove("show");
+      }
+      input.focus();
+      input.select();
+    });
+  </script>
+</body>
+</html>
